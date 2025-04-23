@@ -12,12 +12,12 @@ export default async function handler(req, res) {
     });
 
     const productos = response.results.map(page => ({
-      nombre: page.properties.Producto?.title[0]?.plain_text || "",
-      imagen: page.properties["Imagen producto"]?.files[0]?.external?.url || "",
-      descripcion: page.properties.Descripción?.rich_text[0]?.plain_text || "",
-      talles: page.properties.Talles?.rich_text[0]?.plain_text || "",
-      precio: `$${page.properties.Precio?.number || 0}`,
-      agotado: page.properties.Estado?.select?.name === "Agotado",
+      nombre: page.properties.Producto?.title?.[0]?.plain_text || 'Sin nombre',
+      imagen: page.properties["Imagen producto"]?.files?.[0]?.file?.url || '',
+      descripcion: page.properties.Descripcion?.rich_text?.[0]?.plain_text || 'Sin descripción',
+      talles: page.properties.Talles?.rich_text?.[0]?.plain_text || '-',
+      precio: page.properties.Precio?.number || 0,
+      agotado: page.properties.Estado?.select?.name === 'Agotado'
     }));
 
     res.status(200).json(productos);
