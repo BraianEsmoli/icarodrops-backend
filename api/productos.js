@@ -15,13 +15,25 @@ export default async function handler(req, res) {
 
     const productos = response.results.map(page => {
       const nombre = page.properties?.Producto?.title?.[0]?.plain_text || 'Sin nombre';
-      const imagen = page.properties?.["Imagen producto"]?.files?.[0]?.file?.url || '';
+
+      const imagenes = page.properties?.["Imagen producto"]?.files?.map(f => 
+        f.file?.url || f.external?.url
+      ) || [];
+
       const descripcion = page.properties?.Descripción?.rich_text?.[0]?.plain_text || 'Sin descripción';
       const talles = page.properties?.Talles?.rich_text?.[0]?.plain_text || '-';
       const precio = `$${page.properties?.Precio?.number ?? 0}`;
       const agotado = page.properties?.Estado?.select?.name === 'Agotado';
 
-      return { nombre, imagen, descripcion, talles, precio, agotado };
+      return {
+        nombre,
+        imagen: imagenes[0] || '',
+        imagenes,
+        descripcion,
+        talles,
+        precio,
+        agotado
+      };
     });
 
     res.status(200).json(productos);
